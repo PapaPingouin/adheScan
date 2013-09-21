@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/files">
+        <file>bip.mp3</file>
+        <file>bop.mp3</file>
+    </qresource>
+</RCC>

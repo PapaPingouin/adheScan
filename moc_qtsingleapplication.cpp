@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'qtsingleapplication.h'
 **
-** Created: Sat Sep 21 17:54:17 2013
+** Created: Sat Sep 14 15:02:46 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!

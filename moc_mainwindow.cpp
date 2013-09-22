@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Sat Sep 21 17:54:19 2013
+** Created: Sun Sep 15 12:41:12 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -32,22 +32,25 @@ static const uint qt_meta_data_MainWindow[] = {
 
  // slots: signature, parameters, type, tag, flags
       16,   12,   11,   11, 0x0a,
-      33,   11,   11,   11, 0x08,
-      62,   11,   11,   11, 0x08,
-      88,   11,   11,   11, 0x08,
-     115,   11,   11,   11, 0x08,
-     146,  140,   11,   11, 0x08,
+      33,   11,   11,   11, 0x0a,
+      46,   11,   11,   11, 0x08,
+      75,   11,   11,   11, 0x08,
+     101,   11,   11,   11, 0x08,
+     128,   11,   11,   11, 0x08,
+     159,  153,   11,   11, 0x08,
+     192,   11,   11,   11, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MainWindow[] = {
     "MainWindow\0\0str\0receive(QString)\0"
-    "on_actionQuitter_triggered()\0"
+    "updateTime()\0on_actionQuitter_triggered()\0"
     "on_buttonForgot_clicked()\0"
     "on_buttonNoBadge_clicked()\0"
     "on_cancelAssoc_clicked()\0index\0"
     "on_listeAdh_clicked(QModelIndex)\0"
+    "on_listeAdh_itemSelectionChanged()\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -57,11 +60,13 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         MainWindow *_t = static_cast<MainWindow *>(_o);
         switch (_id) {
         case 0: _t->receive((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 1: _t->on_actionQuitter_triggered(); break;
-        case 2: _t->on_buttonForgot_clicked(); break;
-        case 3: _t->on_buttonNoBadge_clicked(); break;
-        case 4: _t->on_cancelAssoc_clicked(); break;
-        case 5: _t->on_listeAdh_clicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
+        case 1: _t->updateTime(); break;
+        case 2: _t->on_actionQuitter_triggered(); break;
+        case 3: _t->on_buttonForgot_clicked(); break;
+        case 4: _t->on_buttonNoBadge_clicked(); break;
+        case 5: _t->on_cancelAssoc_clicked(); break;
+        case 6: _t->on_listeAdh_clicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
+        case 7: _t->on_listeAdh_itemSelectionChanged(); break;
         default: ;
         }
     }
@@ -99,9 +104,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 8;
     }
     return _id;
 }

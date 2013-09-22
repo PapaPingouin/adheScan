@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Sep 21 17:54:10 2013
+** Created: Sun Sep 15 17:38:40 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -45,6 +45,7 @@ public:
     QFrame *frame;
     QLabel *labelTime;
     QLabel *labelSeance;
+    QLabel *labelNameCheckedInfos;
     QTabWidget *Tabs;
     QWidget *tabListe;
     QHBoxLayout *horizontalLayout;
@@ -52,6 +53,11 @@ public:
     QGroupBox *groupBox;
     QPushButton *buttonForgot;
     QPushButton *buttonNoBadge;
+    QCheckBox *checkDecharge;
+    QCheckBox *checkInscription;
+    QCheckBox *checkPaiement;
+    QCheckBox *checkAutorisation;
+    QCheckBox *checkBadge;
     QWidget *tabDebug;
     QHBoxLayout *horizontalLayout_3;
     QTextEdit *debugText;
@@ -144,6 +150,17 @@ public:
 
         verticalLayout->addLayout(horizontalLayout_2);
 
+        labelNameCheckedInfos = new QLabel(centralWidget);
+        labelNameCheckedInfos->setObjectName(QString::fromUtf8("labelNameCheckedInfos"));
+        QFont font2;
+        font2.setPointSize(12);
+        font2.setBold(true);
+        font2.setWeight(75);
+        labelNameCheckedInfos->setFont(font2);
+        labelNameCheckedInfos->setStyleSheet(QString::fromUtf8("color: rgb(255, 0, 0);"));
+
+        verticalLayout->addWidget(labelNameCheckedInfos);
+
         Tabs = new QTabWidget(centralWidget);
         Tabs->setObjectName(QString::fromUtf8("Tabs"));
         Tabs->setMaximumSize(QSize(16777215, 16777215));
@@ -163,29 +180,33 @@ public:
         new QListWidgetItem(listeAdh);
         new QListWidgetItem(listeAdh);
         listeAdh->setObjectName(QString::fromUtf8("listeAdh"));
-        QFont font2;
-        font2.setPointSize(18);
-        font2.setBold(true);
-        font2.setWeight(75);
-        listeAdh->setFont(font2);
+        QFont font3;
+        font3.setPointSize(18);
+        font3.setBold(true);
+        font3.setWeight(75);
+        listeAdh->setFont(font3);
         listeAdh->setStyleSheet(QString::fromUtf8("::item{ margin: 5px 150px;\n"
 "\n"
 "}"));
         listeAdh->setLineWidth(1);
+        listeAdh->setLayoutMode(QListView::SinglePass);
+        listeAdh->setViewMode(QListView::ListMode);
+        listeAdh->setModelColumn(0);
+        listeAdh->setSortingEnabled(false);
 
         horizontalLayout->addWidget(listeAdh);
 
         groupBox = new QGroupBox(tabListe);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
         groupBox->setMinimumSize(QSize(300, 0));
-        QFont font3;
-        font3.setPointSize(8);
-        font3.setBold(false);
-        font3.setWeight(50);
-        groupBox->setFont(font3);
+        QFont font4;
+        font4.setPointSize(8);
+        font4.setBold(false);
+        font4.setWeight(50);
+        groupBox->setFont(font4);
         buttonForgot = new QPushButton(groupBox);
         buttonForgot->setObjectName(QString::fromUtf8("buttonForgot"));
-        buttonForgot->setGeometry(QRect(10, 60, 281, 101));
+        buttonForgot->setGeometry(QRect(10, 140, 281, 101));
         buttonForgot->setSizeIncrement(QSize(0, 0));
         QPalette palette2;
         QBrush brush2(QColor(85, 170, 0, 255));
@@ -194,9 +215,9 @@ public:
         palette2.setBrush(QPalette::Inactive, QPalette::Button, brush2);
         palette2.setBrush(QPalette::Disabled, QPalette::Button, brush2);
         buttonForgot->setPalette(palette2);
-        QFont font4;
-        font4.setPointSize(16);
-        buttonForgot->setFont(font4);
+        QFont font5;
+        font5.setPointSize(16);
+        buttonForgot->setFont(font5);
         buttonForgot->setAutoFillBackground(true);
         buttonForgot->setStyleSheet(QString::fromUtf8(""));
         buttonForgot->setAutoDefault(false);
@@ -212,8 +233,24 @@ public:
         palette3.setBrush(QPalette::Inactive, QPalette::Button, brush3);
         palette3.setBrush(QPalette::Disabled, QPalette::Button, brush3);
         buttonNoBadge->setPalette(palette3);
-        buttonNoBadge->setFont(font4);
+        buttonNoBadge->setFont(font5);
         buttonNoBadge->setAutoFillBackground(true);
+        checkDecharge = new QCheckBox(groupBox);
+        checkDecharge->setObjectName(QString::fromUtf8("checkDecharge"));
+        checkDecharge->setGeometry(QRect(20, 20, 78, 20));
+        checkDecharge->setCheckable(true);
+        checkInscription = new QCheckBox(groupBox);
+        checkInscription->setObjectName(QString::fromUtf8("checkInscription"));
+        checkInscription->setGeometry(QRect(20, 40, 78, 20));
+        checkPaiement = new QCheckBox(groupBox);
+        checkPaiement->setObjectName(QString::fromUtf8("checkPaiement"));
+        checkPaiement->setGeometry(QRect(20, 60, 78, 20));
+        checkAutorisation = new QCheckBox(groupBox);
+        checkAutorisation->setObjectName(QString::fromUtf8("checkAutorisation"));
+        checkAutorisation->setGeometry(QRect(20, 80, 231, 20));
+        checkBadge = new QCheckBox(groupBox);
+        checkBadge->setObjectName(QString::fromUtf8("checkBadge"));
+        checkBadge->setGeometry(QRect(20, 100, 231, 20));
 
         horizontalLayout->addWidget(groupBox);
 
@@ -250,9 +287,9 @@ public:
         labelAttente = new QLabel(tabBadge);
         labelAttente->setObjectName(QString::fromUtf8("labelAttente"));
         labelAttente->setMinimumSize(QSize(0, 150));
-        QFont font5;
-        font5.setPointSize(40);
-        labelAttente->setFont(font5);
+        QFont font6;
+        font6.setPointSize(40);
+        labelAttente->setFont(font6);
         labelAttente->setAlignment(Qt::AlignCenter);
 
         verticalLayout_2->addWidget(labelAttente);
@@ -278,7 +315,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 822, 23));
+        menuBar->setGeometry(QRect(0, 0, 822, 21));
         menuFichier = new QMenu(menuBar);
         menuFichier->setObjectName(QString::fromUtf8("menuFichier"));
         MainWindow->setMenuBar(menuBar);
@@ -304,6 +341,7 @@ public:
         labelNameChecked->setText(QApplication::translate("MainWindow", "Bienvenue", 0, QApplication::UnicodeUTF8));
         labelTime->setText(QApplication::translate("MainWindow", "Heure", 0, QApplication::UnicodeUTF8));
         labelSeance->setText(QApplication::translate("MainWindow", "S\303\251ance", 0, QApplication::UnicodeUTF8));
+        labelNameCheckedInfos->setText(QApplication::translate("MainWindow", "TextLabel", 0, QApplication::UnicodeUTF8));
 
         const bool __sortingEnabled = listeAdh->isSortingEnabled();
         listeAdh->setSortingEnabled(false);
@@ -318,6 +356,11 @@ public:
         groupBox->setTitle(QApplication::translate("MainWindow", "GroupBox", 0, QApplication::UnicodeUTF8));
         buttonForgot->setText(QApplication::translate("MainWindow", "J'ai oubli\303\251 mon badge", 0, QApplication::UnicodeUTF8));
         buttonNoBadge->setText(QApplication::translate("MainWindow", "Associer un nouveau badge", 0, QApplication::UnicodeUTF8));
+        checkDecharge->setText(QApplication::translate("MainWindow", "D\303\251charge", 0, QApplication::UnicodeUTF8));
+        checkInscription->setText(QApplication::translate("MainWindow", "Inscription", 0, QApplication::UnicodeUTF8));
+        checkPaiement->setText(QApplication::translate("MainWindow", "Paiement", 0, QApplication::UnicodeUTF8));
+        checkAutorisation->setText(QApplication::translate("MainWindow", "Autorisation Parentale", 0, QApplication::UnicodeUTF8));
+        checkBadge->setText(QApplication::translate("MainWindow", "Badge", 0, QApplication::UnicodeUTF8));
         Tabs->setTabText(Tabs->indexOf(tabListe), QApplication::translate("MainWindow", "Recherche par nom", 0, QApplication::UnicodeUTF8));
         Tabs->setTabText(Tabs->indexOf(tabDebug), QApplication::translate("MainWindow", "Debug", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Attente badge pour :", 0, QApplication::UnicodeUTF8));

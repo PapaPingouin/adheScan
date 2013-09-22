@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = adheScan
 TEMPLATE = app
 
-include(../qt-solutions-qt-solutions/qtsingleapplication/src/qtsingleapplication.pri)
+include(qtsingleapplication/qtsingleapplication.pri)
 
 SOURCES += main.cpp\
         mainwindow.cpp

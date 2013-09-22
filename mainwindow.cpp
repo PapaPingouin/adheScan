@@ -16,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     startupSync();
 
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateTime()));
+    timer->start(1000);
+
    // bip = new QSound( "/tmp/bip.wav" );
 
 }
@@ -31,6 +35,10 @@ void MainWindow::initBDD()
     bop = new QMediaPlayer();
     bop->setMedia(QUrl::fromLocalFile("/var/adheScan/bop.mp3"));
     bop->setVolume(100);
+
+    bilip = new QMediaPlayer();
+    bilip->setMedia(QUrl::fromLocalFile("/var/adheScan/bilip.mp3"));
+    bilip->setVolume(100);
 
     QSqlDatabase::addDatabase("QMYSQL","online");
     onlineDB = QSqlDatabase::database( "online", false );
@@ -92,6 +100,10 @@ void MainWindow::initBDD()
     refreshStatusBar();
 }
 
+void MainWindow::updateTime()
+{
+    ui->labelTime->setText( QTime::currentTime().toString( "H:mm:ss") );
+}
 void MainWindow::initBDDSQLite()
 {
     QSqlQuery query( localDB );
@@ -113,7 +125,13 @@ void MainWindow::initBDDSQLite()
     sql = "CREATE TABLE IF NOT EXISTS `adherents` ("
             "`adh_id` INTEGER PRIMARY KEY,"
             "`nom` TEXT,"
-            "`prenom` TEXT"
+            "`prenom` TEXT,"
+            "`decharge` TEXT,"
+            "`inscription` TEXT,"
+            "`paiement` TEXT,"
+            "`autorisation` TEXT,"
+            "`nbr` TEXT,"
+            "`ok` TEXT"
           ");";
     if( !query.exec( sql ) )
     {
@@ -190,17 +208,40 @@ void MainWindow::displayLoggingName( int adh_id )
 {
     QSqlQuery localQuery( localDB );
     QString sql;
+    int infos=0;
 
     if( localQuery.exec("SELECT * FROM adherents WHERE adh_id="+QString::number(adh_id)+"") )
     {
         //int nameCol = localQuery.record().indexOf("nom");
         int prenCol = localQuery.record().indexOf("prenom");
+        int dechCol = localQuery.record().indexOf("decharge");
+        int inscCol = localQuery.record().indexOf("inscription");
+        int paieCol = localQuery.record().indexOf("paiement");
+        int autoCol = localQuery.record().indexOf("autorisation");
         localQuery.next();
+
+        infos += localQuery.value( dechCol ).toInt() * INFO_DECHARGE;
+        infos += localQuery.value( inscCol ).toInt() * INFO_INSCRIPTION;
+        infos += localQuery.value( paieCol ).toInt() * INFO_PAIEMENT;
+        infos += localQuery.value( autoCol ).toInt() * INFO_AUTORISATION;
 
         bip->play();
 
         ui->labelNameChecked->setText( "Bienvenue "+localQuery.value( prenCol ).toString() );
 
+        ui->labelNameCheckedInfos->setText( "" );
+
+        if( !(infos & INFO_INSCRIPTION) && !(infos & INFO_DECHARGE) )
+        {
+            ui->labelNameCheckedInfos->setText( "Décharge ET inscription non fournies !!!" );
+            bilip->play();
+        }
+
+        if( (infos & INFO_INSCRIPTION) && !(infos & INFO_PAIEMENT) )
+        {
+            ui->labelNameCheckedInfos->setText( "Manque le paiement !!!" );
+            bilip->play();
+        }
     }
 
 }
@@ -232,6 +273,31 @@ QString MainWindow::getBadgeIdFromAdh( int adh_id )
             badge_id = localQuery.value( idCol ).toString();
     }
     return badge_id;
+}
+
+int MainWindow::getInfosFromAdh( int adh_id )
+{
+    QSqlQuery localQuery( localDB );
+    QString sql;
+    int infos=0;
+
+    if( localQuery.exec("SELECT * FROM adherents WHERE adh_id='"+QString::number(adh_id)+"'") )
+    {
+        int dechCol = localQuery.record().indexOf("decharge");
+        int inscCol = localQuery.record().indexOf("inscription");
+        int paieCol = localQuery.record().indexOf("paiement");
+        int autoCol = localQuery.record().indexOf("autorisation");
+        if( localQuery.next() )
+        {
+
+            infos += localQuery.value( dechCol ).toInt() * INFO_DECHARGE;
+            infos += localQuery.value( inscCol ).toInt() * INFO_INSCRIPTION;
+            infos += localQuery.value( paieCol ).toInt() * INFO_PAIEMENT;
+            infos += localQuery.value( autoCol ).toInt() * INFO_AUTORISATION;
+
+        }
+    }
+    return infos;
 }
 
 void MainWindow::logScan( int adh_id, QString badge_id )
@@ -352,8 +418,9 @@ int MainWindow::getSelectedAdh()
     QString item;
     int adh_id;
 
-    item = ui->listeAdh->selectedItems().at(0)->text();
-    QTextStream(&item) >> adh_id;
+//    item = ui->listeAdh->selectedItems().at(0)->text();
+//    QTextStream(&item) >> adh_id;
+    adh_id = ui->listeAdh->selectedItems().at(0)->data( Qt::ToolTipRole ).toInt();
 
     return adh_id;
 }
@@ -368,6 +435,7 @@ void MainWindow::startupSync()
         // 1 - Remonte toutes les données ayant un toSync
         // 2 - Récupère toutes les données à jour
 
+        ui->debugText->append( "online sync" );
 
         QSqlQuery onlineQuery( onlineDB );
 
@@ -409,33 +477,83 @@ void MainWindow::startupSync()
             //ui->debugText->append( localQuery.lastError().driverText() );
         }
 
-        localQuery.exec("END TRANSACTION");
+        if( localQuery.exec("SELECT COUNT(*) FROM badges") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM badges :==> "+localQuery.value( 0 ).toString() );
+        }
+        if( localQuery.exec("SELECT COUNT(*) FROM adherents") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM adherents :==> "+localQuery.value( 0 ).toString() );
+        }
+        if( localQuery.exec("SELECT COUNT(*) FROM logscans") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM logscans :==> "+localQuery.value( 0 ).toString() );
+        }
 
+        // VIDE LES TABLES LOCALES
+
+        if( localQuery.exec("DELETE FROM `badges`;") )
+            ui->debugText->append( "DELETE FROM `badges`;" );
+
+        if( localQuery.exec("DELETE FROM `adherents`;") )
+            ui->debugText->append( "DELETE FROM `adherents`;" );
+
+        if( localQuery.exec("DELETE FROM `logscans`;") )
+            ui->debugText->append( "DELETE FROM `adherents`;" );
+
+
+
+        if( localQuery.exec("SELECT COUNT(*) FROM badges") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM badges :==> "+localQuery.value( 0 ).toString() );
+        }
+        if( localQuery.exec("SELECT COUNT(*) FROM adherents") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM adherents :==> "+localQuery.value( 0 ).toString() );
+        }
+        if( localQuery.exec("SELECT COUNT(*) FROM logscans") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM logscans :==> "+localQuery.value( 0 ).toString() );
+        }
 
         // 2 - Récupère toutes les données à jour
 
-        localQuery.exec("TRUNCATE TABLE `badges`;");
-        localQuery.exec("TRUNCATE TABLE `adherents`;");
-        localQuery.exec("TRUNCATE TABLE `logscans`;");
-
-        localQuery.exec("BEGIN TRANSACTION");
-
-        if( onlineQuery.exec("SELECT a.adh_id, UPPER(a.adh_nom) as nom, LOWER(a.adh_prenom) as prenom FROM Adherents as a,  xAnnees as x , Annees as an WHERE an.current=1 AND an.annee_id=x.annee_id AND a.adh_id=x.adh_id ORDER BY adh_nom, adh_prenom") )
+      /*  if( onlineQuery.exec("SELECT a.adh_id,"
+                             " UPPER(a.adh_nom) as nom,"
+                             " LOWER(a.adh_prenom) as prenom, "
+                             " l.decharge, l.inscription, l.paiement, l.autorisation "
+                             " FROM  `xAnnees` as x , `Annees` as an , `Adherents` as a"
+                             " LEFT JOIN `adh_logs` as l ON a.adh_id=l.adh_id "
+                             " WHERE an.current=1 AND an.annee_id=x.annee_id AND a.adh_id=x.adh_id GROUP BY adh_id ORDER BY adh_nom, adh_prenom") )
+        */
+        if( onlineQuery.exec("SELECT * FROM dataToAdheScan ORDER BY nom,prenom"))
         {
             int idCol = onlineQuery.record().indexOf("adh_id");
             int nameCol = onlineQuery.record().indexOf("nom");
             int prenCol = onlineQuery.record().indexOf("prenom");
+            int dechCol = onlineQuery.record().indexOf("decharge");
+            int inscCol = onlineQuery.record().indexOf("inscription");
+            int paieCol = onlineQuery.record().indexOf("paiement");
+            int autoCol = onlineQuery.record().indexOf("autorisation");
+            int counCol = onlineQuery.record().indexOf("nbr");
             while( onlineQuery.next() )
             {
-                sql = "INSERT INTO `adherents` ( `adh_id`, `nom`, `prenom` ) VALUES ";
-                sql += " ( '"+onlineQuery.value( idCol ).toString()+"' , '"+onlineQuery.value( nameCol ).toString()+"','"+onlineQuery.value( prenCol ).toString()+"' ) ";
-                localQuery.exec( sql+";" );
+                sql = "INSERT INTO `adherents` ( `adh_id`, `nom`, `prenom`,`decharge`,`inscription`,`paiement`,`autorisation`,`nbr` ) VALUES ";
+                sql += " ( '"+onlineQuery.value( idCol ).toString()+"' , \""+onlineQuery.value( nameCol ).toString()+"\",\""+onlineQuery.value( prenCol ).toString()+"\",'"+onlineQuery.value( dechCol ).toString()+"','"+onlineQuery.value( inscCol ).toString()+"','"+onlineQuery.value( paieCol ).toString()+"','"+onlineQuery.value( autoCol ).toString()+"','"+onlineQuery.value( counCol ).toString()+"' ) ";
+                if( ! localQuery.exec( sql+";" ) )
+                    ui->debugText->append("ERROR : "+sql+" - "+localQuery.lastError().databaseText() );
 
             }
-            //ui->debugText->append( sql );
-            //localQuery.exec( sql+";" );
-            //ui->debugText->append( localQuery.lastError().driverText() );
+
         }
+        else
+            ui->debugText->append( sql+' - '+onlineQuery.lastError().text() );
 
         if( onlineQuery.exec("SELECT * FROM badges") )
         {
@@ -446,9 +564,26 @@ void MainWindow::startupSync()
             {
                 sql = "INSERT INTO `badges` ( `adh_id`, `badge_id` ) VALUES ";
                 sql += " ( '"+onlineQuery.value( adhCol ).toString()+"' , '"+onlineQuery.value( badgeCol ).toString()+"' ) ";
-                localQuery.exec( sql+";" );
+                if( ! localQuery.exec( sql+";" ) )
+                    ui->debugText->append("ERROR : "+sql+" - "+localQuery.lastError().databaseText() );
 
             }
+        }
+
+        if( localQuery.exec("SELECT COUNT(*) FROM badges") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM badges :==> "+localQuery.value( 0 ).toString() );
+        }
+        if( localQuery.exec("SELECT COUNT(*) FROM adherents") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM adherents :==> "+localQuery.value( 0 ).toString() );
+        }
+        if( localQuery.exec("SELECT COUNT(*) FROM logscans") )
+        {
+            localQuery.next();
+            ui->debugText->append( "SELECT COUNT(*) FROM logscans :==> "+localQuery.value( 0 ).toString() );
         }
 
         localQuery.exec("END TRANSACTION");
@@ -495,8 +630,13 @@ void MainWindow::startupSync()
         int idCol = localQuery.record().indexOf("adh_id");
         while( localQuery.next() )
         {
-            QString nom = localQuery.value( idCol ).toString()+" - "+localQuery.value( nameCol ).toString()+" - "+localQuery.value( prenCol ).toString();
-            ui->listeAdh->addItem( nom );
+            QString nom = localQuery.value( nameCol ).toString()+" - "+localQuery.value( prenCol ).toString();
+            QListWidgetItem *item;
+            item = new QListWidgetItem( nom );
+            item->setData( Qt::ToolTipRole, localQuery.value( idCol ).toInt() );
+            //item.setText( nom );
+            ui->listeAdh->addItem( item );
+
         }
     }
 
@@ -516,13 +656,41 @@ void MainWindow::on_cancelAssoc_clicked()
 void MainWindow::on_listeAdh_clicked(const QModelIndex &index)
 {
     int adh_id;
+    int infos;
     QString badge_id;
     adh_id = getSelectedAdh();
     badge_id = getBadgeIdFromAdh( adh_id );
+    infos = getInfosFromAdh( adh_id );
 
-    if( badge_id != "")
-        ui->buttonForgot->setEnabled( true );
+    ui->buttonForgot->setEnabled( true );
+
+    if( !( infos & INFO_INSCRIPTION ) || !( infos & INFO_PAIEMENT ) )
+    {
+        ui->buttonForgot->setText(QString::fromUtf8("Séance d'essai"));
+
+    }
     else
-        ui->buttonForgot->setEnabled( false );
+    {
+        ui->buttonForgot->setText(QString::fromUtf8("J'ai oublié mon badge"));
+        if( badge_id == "")
+            ui->buttonForgot->setEnabled( false );
+    }
 
+    ui->checkDecharge->setChecked( ( infos & INFO_DECHARGE ) );
+    ui->checkInscription->setChecked( ( infos & INFO_INSCRIPTION ) );
+    ui->checkPaiement->setChecked( ( infos & INFO_PAIEMENT ) );
+    ui->checkAutorisation->setChecked( ( infos & INFO_AUTORISATION ) );
+
+    ui->checkBadge->setChecked( (badge_id != "" ) );
+    ui->checkBadge->setText( "Badge : "+badge_id );
+
+    ui->labelNameCheckedInfos->setText( QString::number( infos) );
+
+
+}
+
+void MainWindow::on_listeAdh_itemSelectionChanged()
+{
+    QModelIndex index;
+    on_listeAdh_clicked( index );
 }

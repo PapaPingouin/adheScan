@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>822</width>
-    <height>608</height>
+    <width>862</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -380,7 +380,7 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>140</y>
+             <y>180</y>
              <width>281</width>
              <height>101</height>
             </rect>
@@ -456,7 +456,7 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>280</y>
+             <y>310</y>
              <width>281</width>
              <height>101</height>
             </rect>
@@ -578,6 +578,26 @@
             <string>Badge</string>
            </property>
           </widget>
+          <widget class="QLabel" name="infoNbrSeance">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>140</y>
+             <width>221</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>0 passage avant aujourd'hui</string>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -676,7 +696,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>822</width>
+     <width>862</width>
      <height>21</height>
     </rect>
    </property>

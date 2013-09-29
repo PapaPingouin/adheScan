@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sun Sep 15 17:38:40 2013
+** Created: Sun Sep 29 21:05:29 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -58,6 +58,7 @@ public:
     QCheckBox *checkPaiement;
     QCheckBox *checkAutorisation;
     QCheckBox *checkBadge;
+    QLabel *infoNbrSeance;
     QWidget *tabDebug;
     QHBoxLayout *horizontalLayout_3;
     QTextEdit *debugText;
@@ -76,7 +77,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(822, 608);
+        MainWindow->resize(862, 655);
         actionQuitter = new QAction(MainWindow);
         actionQuitter->setObjectName(QString::fromUtf8("actionQuitter"));
         centralWidget = new QWidget(MainWindow);
@@ -206,7 +207,7 @@ public:
         groupBox->setFont(font4);
         buttonForgot = new QPushButton(groupBox);
         buttonForgot->setObjectName(QString::fromUtf8("buttonForgot"));
-        buttonForgot->setGeometry(QRect(10, 140, 281, 101));
+        buttonForgot->setGeometry(QRect(10, 180, 281, 101));
         buttonForgot->setSizeIncrement(QSize(0, 0));
         QPalette palette2;
         QBrush brush2(QColor(85, 170, 0, 255));
@@ -225,7 +226,7 @@ public:
         buttonForgot->setFlat(false);
         buttonNoBadge = new QPushButton(groupBox);
         buttonNoBadge->setObjectName(QString::fromUtf8("buttonNoBadge"));
-        buttonNoBadge->setGeometry(QRect(10, 280, 281, 101));
+        buttonNoBadge->setGeometry(QRect(10, 310, 281, 101));
         QPalette palette3;
         QBrush brush3(QColor(255, 170, 0, 255));
         brush3.setStyle(Qt::SolidPattern);
@@ -251,6 +252,14 @@ public:
         checkBadge = new QCheckBox(groupBox);
         checkBadge->setObjectName(QString::fromUtf8("checkBadge"));
         checkBadge->setGeometry(QRect(20, 100, 231, 20));
+        infoNbrSeance = new QLabel(groupBox);
+        infoNbrSeance->setObjectName(QString::fromUtf8("infoNbrSeance"));
+        infoNbrSeance->setGeometry(QRect(50, 140, 221, 16));
+        QFont font6;
+        font6.setPointSize(9);
+        font6.setBold(true);
+        font6.setWeight(75);
+        infoNbrSeance->setFont(font6);
 
         horizontalLayout->addWidget(groupBox);
 
@@ -287,9 +296,9 @@ public:
         labelAttente = new QLabel(tabBadge);
         labelAttente->setObjectName(QString::fromUtf8("labelAttente"));
         labelAttente->setMinimumSize(QSize(0, 150));
-        QFont font6;
-        font6.setPointSize(40);
-        labelAttente->setFont(font6);
+        QFont font7;
+        font7.setPointSize(40);
+        labelAttente->setFont(font7);
         labelAttente->setAlignment(Qt::AlignCenter);
 
         verticalLayout_2->addWidget(labelAttente);
@@ -315,7 +324,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 822, 21));
+        menuBar->setGeometry(QRect(0, 0, 862, 21));
         menuFichier = new QMenu(menuBar);
         menuFichier->setObjectName(QString::fromUtf8("menuFichier"));
         MainWindow->setMenuBar(menuBar);
@@ -361,6 +370,7 @@ public:
         checkPaiement->setText(QApplication::translate("MainWindow", "Paiement", 0, QApplication::UnicodeUTF8));
         checkAutorisation->setText(QApplication::translate("MainWindow", "Autorisation Parentale", 0, QApplication::UnicodeUTF8));
         checkBadge->setText(QApplication::translate("MainWindow", "Badge", 0, QApplication::UnicodeUTF8));
+        infoNbrSeance->setText(QApplication::translate("MainWindow", "0 passage avant aujourd'hui", 0, QApplication::UnicodeUTF8));
         Tabs->setTabText(Tabs->indexOf(tabListe), QApplication::translate("MainWindow", "Recherche par nom", 0, QApplication::UnicodeUTF8));
         Tabs->setTabText(Tabs->indexOf(tabDebug), QApplication::translate("MainWindow", "Debug", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Attente badge pour :", 0, QApplication::UnicodeUTF8));

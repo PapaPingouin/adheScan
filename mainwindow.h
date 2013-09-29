@@ -68,6 +68,8 @@ private:
     void initBDD();
     void initBDDSQLite();
 
+    int nbrPassages;
+
     void refreshStatusBar();
     void startupSync();
 

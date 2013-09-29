@@ -218,6 +218,7 @@ void MainWindow::displayLoggingName( int adh_id )
         int inscCol = localQuery.record().indexOf("inscription");
         int paieCol = localQuery.record().indexOf("paiement");
         int autoCol = localQuery.record().indexOf("autorisation");
+        int nbrCol = localQuery.record().indexOf("nbr");
         localQuery.next();
 
         infos += localQuery.value( dechCol ).toInt() * INFO_DECHARGE;
@@ -229,17 +230,17 @@ void MainWindow::displayLoggingName( int adh_id )
 
         ui->labelNameChecked->setText( "Bienvenue "+localQuery.value( prenCol ).toString() );
 
-        ui->labelNameCheckedInfos->setText( "" );
+        ui->labelNameCheckedInfos->setText( QString::fromUtf8("( déjà ")+localQuery.value( nbrCol ).toString()+" passages ) " );
 
         if( !(infos & INFO_INSCRIPTION) && !(infos & INFO_DECHARGE) )
         {
-            ui->labelNameCheckedInfos->setText( "Décharge ET inscription non fournies !!!" );
+            ui->labelNameCheckedInfos->setText( QString::fromUtf8("( déjà ")+localQuery.value( nbrCol ).toString()+QString::fromUtf8(" passages ) Décharge ET inscription non fournies !!!") );
             bilip->play();
         }
 
         if( (infos & INFO_INSCRIPTION) && !(infos & INFO_PAIEMENT) )
         {
-            ui->labelNameCheckedInfos->setText( "Manque le paiement !!!" );
+            ui->labelNameCheckedInfos->setText( QString::fromUtf8("( déjà ")+localQuery.value( nbrCol ).toString()+" passages ) Manque le paiement !!!" );
             bilip->play();
         }
     }
@@ -287,6 +288,7 @@ int MainWindow::getInfosFromAdh( int adh_id )
         int inscCol = localQuery.record().indexOf("inscription");
         int paieCol = localQuery.record().indexOf("paiement");
         int autoCol = localQuery.record().indexOf("autorisation");
+        int nbrCol = localQuery.record().indexOf("nbr");
         if( localQuery.next() )
         {
 
@@ -294,11 +296,13 @@ int MainWindow::getInfosFromAdh( int adh_id )
             infos += localQuery.value( inscCol ).toInt() * INFO_INSCRIPTION;
             infos += localQuery.value( paieCol ).toInt() * INFO_PAIEMENT;
             infos += localQuery.value( autoCol ).toInt() * INFO_AUTORISATION;
-
+            nbrPassages = localQuery.value( nbrCol ).toInt();
         }
     }
     return infos;
 }
+
+
 
 void MainWindow::logScan( int adh_id, QString badge_id )
 {
@@ -680,6 +684,8 @@ void MainWindow::on_listeAdh_clicked(const QModelIndex &index)
     ui->checkInscription->setChecked( ( infos & INFO_INSCRIPTION ) );
     ui->checkPaiement->setChecked( ( infos & INFO_PAIEMENT ) );
     ui->checkAutorisation->setChecked( ( infos & INFO_AUTORISATION ) );
+
+    ui->infoNbrSeance->setText( QString::number(nbrPassages)+" passages avant aujourd'hui");
 
     ui->checkBadge->setChecked( (badge_id != "" ) );
     ui->checkBadge->setText( "Badge : "+badge_id );
